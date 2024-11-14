@@ -11,6 +11,7 @@
 
 #include <net/mac80211.h>
 #include <linux/kthread.h>
+#include <linux/sched.h>
 #include <uapi/linux/sched/types.h>
 
 #include "xradio.h"
@@ -291,11 +292,13 @@ int thread_dpa_up(struct task_struct *p, s8 *prio_index)
 	}
 	idx = (*prio_index) - 1;
 	if (idx > PROC_HIGH_IDX) {
-		struct sched_param param = {
-			.sched_priority = g_dpa[idx].priority
-		};
+		// struct sched_param param = {
+		// 	.sched_priority = g_dpa[idx].priority
+		// };
+		struct sched_attr attr = {.size=sizeof(struct sched_attr), .sched_policy=g_dpa[idx].policy, .sched_priority=g_dpa[idx].priority};
 		bh_printk(XRADIO_DBG_NIY, "%s=%d\n", __func__, idx);
-		ret = sched_setscheduler(p, g_dpa[idx].policy, &param);
+		// ret = sched_setscheduler(p, g_dpa[idx].policy, &param);
+		ret = sched_setattr_nocheck(p, &attr);
 		if (!ret)
 			*prio_index = idx;
 		else
@@ -321,11 +324,13 @@ int thread_dpa_down(struct task_struct *p, u8 *prio_index)
 	}
 	idx = (*prio_index) + 1;
 	if (idx < PROC_LOW_IDX) {
-		struct sched_param param = {
-			.sched_priority = g_dpa[idx].priority
-		};
+		// struct sched_param param = {
+		// 	.sched_priority = g_dpa[idx].priority
+		// };
+		struct sched_attr attr = {.size=sizeof(struct sched_attr), .sched_policy=g_dpa[idx].policy, .sched_priority=g_dpa[idx].priority};
 		bh_printk(XRADIO_DBG_NIY, "%s=%d\n", __func__, idx);
-		ret = sched_setscheduler(p, g_dpa[idx].policy, &param);
+		// ret = sched_setscheduler(p, g_dpa[idx].policy, &param);
+		ret = sched_setattr_nocheck(p, &attr);
 		if (!ret)
 			*prio_index = idx;
 		else
@@ -341,12 +346,14 @@ int thread_dpa_down(struct task_struct *p, u8 *prio_index)
 }
 static inline int proc_set_priority(struct xradio_common *hw_priv, u8 idx)
 {
-	struct sched_param param = {
-		.sched_priority = g_dpa[idx].priority
-	};
+	// struct sched_param param = {
+	// 	.sched_priority = g_dpa[idx].priority
+	// };
+	struct sched_attr attr = {.size=sizeof(struct sched_attr), .sched_policy=g_dpa[idx].policy, .sched_priority=g_dpa[idx].priority};
 	hw_priv->proc.proc_prio = idx;
-	return sched_setscheduler(hw_priv->proc.proc_thread,
-			g_dpa[idx].policy, &param);
+	// return sched_setscheduler(hw_priv->proc.proc_thread,
+			// g_dpa[idx].policy, &param);
+	return sched_setattr_nocheck(p, &attr);
 }
 int dpa_proc_tx;
 int dpa_proc_rx;
@@ -411,9 +418,10 @@ static int xradio_proc(void *arg)
 {
 	struct xradio_common *hw_priv = arg;
 #if !BH_PROC_DPA
-	struct sched_param param = {
-		.sched_priority = 99
-	};
+	// struct sched_param param = {
+	// 	.sched_priority = 99
+	// };
+	struct sched_attr attr = {.size=sizeof(struct sched_attr), .sched_policy=SCHED_FIFO, .sched_priority=99};
 #endif
 	int ret = 0;
 	int term = 0;
@@ -427,8 +435,9 @@ static int xradio_proc(void *arg)
 #if BH_PROC_DPA
 	ret = proc_set_priority(hw_priv, 3);
 #else
-	ret = sched_setscheduler(hw_priv->proc.proc_thread,
-			SCHED_FIFO, &param);
+	// ret = sched_setscheduler(hw_priv->proc.proc_thread,
+			// SCHED_FIFO, &param);
+	ret = sched_setattr_nocheck(p, &attr);
 #endif
 	if (ret)
 		bh_printk(XRADIO_DBG_WARN, "%s sched_setscheduler failed(%d)\n",
@@ -1258,9 +1267,10 @@ u32  tx_limit_cnt6;
 static int xradio_bh(void *arg)
 {
 	struct xradio_common *hw_priv = arg;
-	struct sched_param param = {
-		.sched_priority = 1
-	};
+	// struct sched_param param = {
+	// 	.sched_priority = 1
+	// };
+	struct sched_attr attr = {.size=sizeof(struct sched_attr), .sched_policy=SCHED_FIFO, .sched_priority=1};
 	int ret = 0;
 	struct sk_buff *skb_rx = NULL;
 	size_t read_len = 0;
@@ -1285,7 +1295,8 @@ static int xradio_bh(void *arg)
 	int vif_selected;
 
 	bh_printk(XRADIO_DBG_MSG, "%s\n", __func__);
-	ret = sched_setscheduler(hw_priv->bh_thread, SCHED_FIFO, &param);
+	// ret = sched_setscheduler(hw_priv->bh_thread, SCHED_FIFO, &param);
+	ret = sched_setattr_nocheck(hw_priv->bh_thread, &attr);
 	if (ret)
 		bh_printk(XRADIO_DBG_WARN, "%s sched_setscheduler failed(%d)\n",
 			__func__, ret);

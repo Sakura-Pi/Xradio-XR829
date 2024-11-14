@@ -20,7 +20,7 @@
 #include <linux/wait.h>
 #include <linux/firmware.h>
 #include <uapi/linux/sched/types.h>
-
+#include <linux/sched.h>
 
 #include "etf.h"
 #include "xradio.h"
@@ -208,7 +208,8 @@ static int adapter_proc(void *param)
 static int adapter_start_thread(void)
 {
 	int ret = 0;
-	struct sched_param param = {.sched_priority = 100 };
+	//struct sched_param param = {.sched_priority = 100 };
+	struct sched_attr attr = {.size=sizeof(struct sched_attr), .sched_policy=SCHED_NORMAL, .sched_priority=100};
 	etf_printk(XRADIO_DBG_NIY, "%s\n", __func__);
 	adapter_priv.thread_tsk = NULL;
 	adapter_priv.exit = 0;
@@ -217,7 +218,8 @@ static int adapter_start_thread(void)
 		ret = PTR_ERR(adapter_priv.thread_tsk);
 		adapter_priv.thread_tsk = NULL;
 	} else {
-		sched_setscheduler(adapter_priv.thread_tsk, SCHED_NORMAL, &param);
+		//sched_setscheduler(adapter_priv.thread_tsk, SCHED_NORMAL, &param);
+		sched_setattr_nocheck(adapter_priv.thread_tsk, &attr);
 		wake_up_process(adapter_priv.thread_tsk);
 	}
 	return ret;
