@@ -1228,11 +1228,7 @@ static void ieee80211_chswitch_post_beacon(struct ieee80211_sub_if_data *sdata)
 		return;
 	}
 
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0))
-	cfg80211_ch_switch_notify(sdata->dev, &sdata->reserved_chandef, 0);
-#else
 	cfg80211_ch_switch_notify(sdata->dev, &sdata->reserved_chandef);
-#endif
 }
 
 void mac80211_chswitch_done(struct ieee80211_vif *vif, bool success)
@@ -1418,13 +1414,7 @@ ieee80211_sta_process_chanswitch(struct ieee80211_sub_if_data *sdata,
 					  IEEE80211_QUEUE_STOP_REASON_CSA);
 	mutex_unlock(&local->mtx);
 
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0))
-	cfg80211_ch_switch_started_notify(sdata->dev, &csa_ie.chandef, 0,
-					  csa_ie.count, 0);
-#else
-	cfg80211_ch_switch_started_notify(sdata->dev, &csa_ie.chandef,
-					  csa_ie.count);
-#endif
+	cfg80211_ch_switch_started_notify(sdata->dev, &csa_ie.chandef, csa_ie.count, false);
 
 	if (local->ops->channel_switch) {
 		/* use driver's channel switch callback */
@@ -2746,11 +2736,7 @@ static void ieee80211_report_disconnect(struct ieee80211_sub_if_data *sdata,
 	};
 
 	if (tx)
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0))
 		cfg80211_tx_mlme_mgmt(sdata->dev, buf, len, false);
-#else
-		cfg80211_tx_mlme_mgmt(sdata->dev, buf, len);
-#endif
 	else
 		cfg80211_rx_mlme_mgmt(sdata->dev, buf, len);
 
@@ -4602,13 +4588,8 @@ void ieee80211_mgd_quiesce(struct ieee80211_sub_if_data *sdata)
 			ieee80211_destroy_assoc_data(sdata, false, true);
 		if (ifmgd->auth_data)
 			ieee80211_destroy_auth_data(sdata, false);
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0))
 		cfg80211_tx_mlme_mgmt(sdata->dev, frame_buf,
 				      IEEE80211_DEAUTH_FRAME_LEN, false);
-#else
-		cfg80211_tx_mlme_mgmt(sdata->dev, frame_buf,
-				      IEEE80211_DEAUTH_FRAME_LEN);
-#endif
 	}
 
 	/* This is a bit of a hack - we should find a better and more generic

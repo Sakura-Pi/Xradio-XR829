@@ -383,9 +383,6 @@ static int ieee80211_set_tx(struct ieee80211_sub_if_data *sdata,
 }
 
 static int ieee80211_add_key(struct wiphy *wiphy, struct net_device *dev,
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 41)
-			     int link_id,
-#endif
 			     u8 key_idx, bool pairwise, const u8 *mac_addr,
 			     struct key_params *params)
 {
@@ -502,9 +499,6 @@ static int ieee80211_add_key(struct wiphy *wiphy, struct net_device *dev,
 }
 
 static int ieee80211_del_key(struct wiphy *wiphy, struct net_device *dev,
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 41)
-			     int link_id,
-#endif
 			     u8 key_idx, bool pairwise, const u8 *mac_addr)
 {
 	struct ieee80211_sub_if_data *sdata = IEEE80211_DEV_TO_SUB_IF(dev);
@@ -546,9 +540,6 @@ static int ieee80211_del_key(struct wiphy *wiphy, struct net_device *dev,
 }
 
 static int ieee80211_get_key(struct wiphy *wiphy, struct net_device *dev,
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 41)
-			     int link_id,
-#endif
 			     u8 key_idx, bool pairwise, const u8 *mac_addr,
 			     void *cookie,
 			     void (*callback)(void *cookie,
@@ -668,9 +659,6 @@ static int ieee80211_get_key(struct wiphy *wiphy, struct net_device *dev,
 
 static int ieee80211_config_default_key(struct wiphy *wiphy,
 					struct net_device *dev,
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 41)
-					int link_id,
-#endif
 					u8 key_idx, bool uni,
 					bool multi)
 {
@@ -683,9 +671,6 @@ static int ieee80211_config_default_key(struct wiphy *wiphy,
 
 static int ieee80211_config_default_mgmt_key(struct wiphy *wiphy,
 					     struct net_device *dev,
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 41)
-					     int link_id,
-#endif
 					     u8 key_idx)
 {
 	struct ieee80211_sub_if_data *sdata = IEEE80211_DEV_TO_SUB_IF(dev);
@@ -1283,11 +1268,7 @@ static int ieee80211_change_beacon(struct wiphy *wiphy, struct net_device *dev,
 	return 0;
 }
 
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0))
-static int ieee80211_stop_ap(struct wiphy *wiphy, struct net_device *dev, unsigned int link_id)
-#else
 static int ieee80211_stop_ap(struct wiphy *wiphy, struct net_device *dev)
-#endif
 {
 	struct ieee80211_sub_if_data *sdata = IEEE80211_DEV_TO_SUB_IF(dev);
 	struct ieee80211_sub_if_data *vlan;
@@ -1504,11 +1485,7 @@ static int sta_apply_parameters(struct ieee80211_local *local,
 	struct ieee80211_supported_band *sband;
 	struct ieee80211_sub_if_data *sdata = sta->sdata;
 	u32 mask, set;
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 41)
-	struct link_station_parameters *link_sta_params = &params->link_sta_params;
-#else
 	struct station_parameters *link_sta_params = params;
-#endif
 
 	sband = ieee80211_get_sband(sdata);
 	if (!sband)
@@ -3036,9 +3013,6 @@ static int ieee80211_set_cqm_rssi_range_config(struct wiphy *wiphy,
 
 static int ieee80211_set_bitrate_mask(struct wiphy *wiphy,
 				      struct net_device *dev,
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0))
-				      unsigned int link_id,
-#endif
 				      const u8 *peer,
 				      const struct cfg80211_bitrate_mask *mask)
 {
@@ -3328,11 +3302,7 @@ static int __ieee80211_csa_finalize(struct ieee80211_sub_if_data *sdata)
 	if (err)
 		return err;
 
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0))
-	cfg80211_ch_switch_notify(sdata->dev, &sdata->csa_chandef, 0);
-#else
 	cfg80211_ch_switch_notify(sdata->dev, &sdata->csa_chandef);
-#endif
 
 	return 0;
 }
@@ -3581,13 +3551,7 @@ __ieee80211_channel_switch(struct wiphy *wiphy, struct net_device *dev,
 		ieee80211_stop_vif_queues(local, sdata,
 					  IEEE80211_QUEUE_STOP_REASON_CSA);
 
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0))
-	cfg80211_ch_switch_started_notify(sdata->dev, &sdata->csa_chandef, 0,
-					  params->count, 0);
-#else
-	cfg80211_ch_switch_started_notify(sdata->dev, &sdata->csa_chandef,
-					  params->count);
-#endif
+	cfg80211_ch_switch_started_notify(sdata->dev, &sdata->csa_chandef, params->count, false);
 
 	if (changed) {
 		ieee80211_bss_info_change_notify(sdata, changed);
@@ -3823,9 +3787,6 @@ unlock:
 
 static int ieee80211_cfg_get_channel(struct wiphy *wiphy,
 				     struct wireless_dev *wdev,
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0))
-				     unsigned int link_id,
-#endif
 				     struct cfg80211_chan_def *chandef)
 {
 	struct ieee80211_sub_if_data *sdata = IEEE80211_WDEV_TO_SUB_IF(wdev);
@@ -3886,9 +3847,6 @@ static int ieee80211_set_qos_map(struct wiphy *wiphy,
 
 static int ieee80211_set_ap_chanwidth(struct wiphy *wiphy,
 				      struct net_device *dev,
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0))
-				      unsigned int link_id,
-#endif
 				      struct cfg80211_chan_def *chandef)
 {
 	struct ieee80211_sub_if_data *sdata = IEEE80211_DEV_TO_SUB_IF(dev);

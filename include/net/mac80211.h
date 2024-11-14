@@ -24,9 +24,7 @@
 #include <asm/unaligned.h>
 #include <linux/version.h>
 
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0))
-#define IEEE80211_MAX_AMPDU_BUF IEEE80211_MAX_AMPDU_BUF_HE
-#endif
+#define IEEE80211_MAX_AMPDU_BUF 0x100
 
 #define WLAN_EID_HT_INFORMATION  61
 /**
