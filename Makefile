@@ -16,6 +16,8 @@ CONFIG_XRADIO_DUMP_ON_ERROR = n
 CONFIG_XRADIO_DEBUGFS = y
 CONFIG_XRMAC_VERBOSE_DEBUG = y
 CONFIG_XRMAC_DRIVER_API_TRACER = y
+CONFIG_XRMAC_MESH = y
+CONFIG_XRMAC_LEDS = y
 CONFIG_MODULE_NAME = xr829
 
 define boolen_flag
@@ -183,8 +185,8 @@ ccflags-y += -DHW_RESTART
 ccflags-y += -DHW_ERROR_WIFI_RESET
 
 ## Use semaphore to sync bh txrx.
-#ccflags-y += -DBH_USE_SEMAPHORE
-ccflags-y += -DBH_PROC_THREAD
+ccflags-y += -DBH_USE_SEMAPHORE
+# ccflags-y += -DBH_PROC_THREAD
 ccflags-y += -DBH_COMINGRX_FORECAST
 #ccflags-y += -H
 
