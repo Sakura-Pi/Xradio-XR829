@@ -43,8 +43,6 @@ extern void sw_mci_rescan_card(unsigned id, unsigned insert);
 extern int sw_mci_check_r1_ready(struct mmc_host *mmc, unsigned ms);
 #endif
 
-int xradio_get_syscfg(void);
-
 /* platform interfaces */
 int  xradio_plat_init(void);
 void xradio_plat_deinit(void);
