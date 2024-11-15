@@ -12,7 +12,7 @@
 #define FWIO_H_INCLUDED
 
 #define XR829_HW_REV0       (8290)
-#define FIRMWARE_BASE_PATH  ""
+#define FIRMWARE_BASE_PATH  "xr829/"
 
 #define XR829_BOOTLOADER    (FIRMWARE_BASE_PATH "boot_xr829.bin")
 #define XR829_FIRMWARE      (FIRMWARE_BASE_PATH "fw_xr829.bin")
