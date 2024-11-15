@@ -19,7 +19,7 @@
 #define XRADIO_SPEC_MINOR_VER 0
 #define XRADIO_COMMIT_HASH "6d191d3"
 
-#define XRADIO_COMMIT_BRANCH "(compat5.4-linux5.4-xr829)"
+#define XRADIO_COMMIT_BRANCH "(compat5.15-linux5.15-xr829)"
 
 #define __XR_VERSTR(x)   #x
 #define _XR_VERSTR(x)   __XR_VERSTR(x)
